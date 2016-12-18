@@ -1,52 +1,50 @@
 #Rafael PAndrade
 #18/12/2016
 
-#ANSI Color Codes:
-#Color:		|Foreground	|Background
-#Black		|30		|40
-#Red		|31		|41
-#Green		|32		|42
-#Yellow		|33		|43
-#Blue		|34		|44
-#Magenta	|35		|45
-#Cyan		|36		|46
-#White		|37		|47
+#Ansi-print project
+#function to format printing using solely ANSI escape sequences
 
-
-#ANSI printing modes:
-#(There are more)
-#Off=0
-#Bold=1
-#Underscore=4
-#Blink=5
-#Reverse=7
-#Concealed=8
-
-
-#ANSI Color Syntax:
-#
-#    \033[<mode>;3<color number>;4<color number>m
-#
-#where:
-#-3 stands for the foreground (font) color
-#-4 stands for the background (screen) color
-
-def cprint(string, mode=0, colorf=7, colorb=0):
+def aprint(string, *args):
 	"""
-	Prints colored output on terminal sessions
+	Outputs given string according to the arguments given
 	
 	Input:
-	-string: text to be written on screen
-	-mode: ansi mode (default-off)
-	-colorf: foreground (font) color (default-white) 
-	-colorf: background (screen) color (default-white) 
-	
+	-string: string to print
+	-*args: multiple possible arguments, including:
+		-[tuple]colors:white, black, red
+		-modes: underlined, italic,...
+		-[tuple] a position-(lines, collumns) #not implemented
 	Output:
-	-Prints <strings> with specified colors
+	-print() with arguments given
+	
 	"""
+
+	#1st step: create necessary ansi codes
+	codes='\033['
 	
-	argument='\033['+str(mode)+';3'+str(colorf)+';4'+str(colorb)+'m'
+	#ccodes: color related codes are concatenated on a single escape sequence
+	ccodes=codes
 	
-	print(argument+string)
+	
+	colors={'black':'0', 'red':'1', 'green':'2', 'yellow':'3', 'blue':'4', 'magenta':'5', 'cyan':'6', 'white':'7'}
+	modes={'reset':'0', 'bold':'1', 'dim':'2', 'italic':'3', 'underline':'4'}
+
+	for setting in args:
+		if setting in modes:
+			ccodes+= modes[setting]+';'
+		elif isinstance(setting, tuple) and len(setting)==2:
+			if setting[0] in colors:
+			#colors
+				if setting[0]!=setting[1]:
+					ccodes+= '3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+';'
+				else:
+					raise ValueError('aprint: background and foreground colors cannot be the same')
+			else:
+			#position
+				codes=codes
+	
+	ccodes=ccodes[:-1]+'m'
+	#2nd step: printing the ansi codes+string+resetting ansi codes
+	print(ccodes+str(string)+'\033[0m')
 	return
 
