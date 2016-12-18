@@ -20,31 +20,33 @@ def aprint(string, *args):
 	"""
 
 	#1st step: create necessary ansi codes
-	codes='\033['
-	
-	#ccodes: color related codes are concatenated on a single escape sequence
-	ccodes=codes
-	
+	init='\033['
+	mcodes=init+'0;'
+	ccodes=''
+	pcodes=''
 	
 	colors={'black':'0', 'red':'1', 'green':'2', 'yellow':'3', 'blue':'4', 'magenta':'5', 'cyan':'6', 'white':'7'}
 	modes={'reset':'0', 'bold':'1', 'dim':'2', 'italic':'3', 'underline':'4'}
 
 	for setting in args:
 		if setting in modes:
-			ccodes+= modes[setting]+';'
+		#modes
+			mcodes+= modes[setting]+';'
 		elif isinstance(setting, tuple) and len(setting)==2:
 			if setting[0] in colors:
 			#colors
 				if setting[0]!=setting[1]:
-					ccodes+= '3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+';'
+					ccodes=init+'3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+'m'
 				else:
 					raise ValueError('aprint: background and foreground colors cannot be the same')
-			else:
+			elif isinstance(setting[0], int):
 			#position
-				codes=codes
+				pcodes=init+str(setting[0])+';'+str(setting[1])+'f'
+				#codes=codes
 	
-	ccodes=ccodes[:-1]+'m'
-	#2nd step: printing the ansi codes+string+resetting ansi codes
-	print(ccodes+str(string)+'\033[0m')
+	mcodes=mcodes[:-1]+'m'
+
+	#2nd step: printing the ansi codes+string+reset
+	print(mcodes+ccodes+pcodes+str(string)+'\033[0m')
 	return
 
