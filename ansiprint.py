@@ -13,7 +13,7 @@ def aprint(string, *args):
 	-*args: multiple possible arguments, including:
 		-[tuple]colors:white, black, red
 		-modes: underlined, italic,...
-		-[tuple] a position-(lines, collumns) #not implemented
+		-[tuple] a position-(lines, collumns)
 	Output:
 	-print() with arguments given
 	
@@ -50,3 +50,6 @@ def aprint(string, *args):
 	print(mcodes+ccodes+pcodes+str(string)+'\033[0m')
 	return
 
+
+#A way to print a thing and comeback to previous line (except last line)
+#>>> print(save_cursos+<anything generated>+rest_cursor+<text under the prompt>+'\033[1A'+'\033[K'+'\033[1A')
