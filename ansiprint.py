@@ -13,40 +13,74 @@ def aprint(string, *args):
 	-*args: multiple possible arguments, including:
 		-[tuple]colors:white, black, red
 		-modes: underlined, italic,...
-		-[tuple] a position-(lines, collumns) #not implemented
+		-[tuple] a position-(lines, collumns)
 	Output:
 	-print() with arguments given
 	
 	"""
 
-	#1st step: create necessary ansi codes
-	init='\033['
+	init='\033['	
+	#mcodes: ansi sequences related to settings like bold, underline, italic...
 	mcodes=init+'0;'
+	
+	#ccodes: sequences for coloring
 	ccodes=''
+	
+	#pcodes:sequences for choosing line and collumn
 	pcodes=''
 	
-	colors={'black':'0', 'red':'1', 'green':'2', 'yellow':'3', 'blue':'4', 'magenta':'5', 'cyan':'6', 'white':'7'}
+	#Option: if we want to keep the same line; and a status message, if we want anything under the cursor line
+	fix_line=False
+	status_msg=''
+
+
+	to_print=''
+
+
 	modes={'reset':'0', 'bold':'1', 'dim':'2', 'italic':'3', 'underline':'4'}
+	colors={'black':'0', 'red':'1', 'green':'2', 'yellow':'3', 'blue':'4', 'magenta':'5', 'cyan':'6', 'white':'7'}
 
 	for setting in args:
 		if setting in modes:
 		#modes
 			mcodes+= modes[setting]+';'
 		elif isinstance(setting, tuple) and len(setting)==2:
-			if setting[0] in colors:
+			if len(setting)==2 and setting[0] in colors:
 			#colors
 				if setting[0]!=setting[1]:
 					ccodes=init+'3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+'m'
 				else:
 					raise ValueError('aprint: background and foreground colors cannot be the same')
-			elif isinstance(setting[0], int):
+			
+			
+			elif len(setting)==2 and isinstance(setting[0], int):
 			#position
 				pcodes=init+str(setting[0])+';'+str(setting[1])+'f'
-				#codes=codes
-	
+			
+			
+			elif setting[0]=='fix_line':
+			#fixing the cursor line on current line
+				fix_line= True
+				status_msg=str(setting[1])
+		
+		elif setting== 'fix_line':
+			fix_line= True
+
+	#Format mode codes
 	mcodes=mcodes[:-1]+'m'
 
-	#2nd step: printing the ansi codes+string+reset
-	print(mcodes+ccodes+pcodes+str(string)+'\033[0m')
+	#Generating main style string
+	to_print=mcodes+ccodes+pcodes+str(string)+'\033[0m'
+
+	#Extra escape sequences to return to the same line+'status' message
+	if fix_line== True:
+		to_print='\033[s'+to_print+'\033[u'+'\033[2K'+status_msg+'\033[A'+'\033[2K'+'\033[A'
+
+
+	#2nd step: printing everything
+	print(to_print)
 	return
 
+
+#A way to print a thing and comeback to previous line (except last line)
+#>>> print(save_cursos+<anything generated>+rest_cursor+<text under the prompt>+'\033[1A'+'\033[K'+'\033[1A')
