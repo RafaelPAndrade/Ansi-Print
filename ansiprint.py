@@ -29,8 +29,11 @@ def aprint(string, *args):
 	#pcodes:sequences for choosing line and collumn
 	pcodes=''
 	
-	#Option: if we want to keep the same line
+	#Option: if we want to keep the same line; and a status message, if we want anything under the cursor line
 	fix_line=False
+	status_msg=''
+
+
 	to_print=''
 
 
@@ -41,20 +44,27 @@ def aprint(string, *args):
 		if setting in modes:
 		#modes
 			mcodes+= modes[setting]+';'
-		elif setting=='fix_line':
-		#fixing the cursor line on current line
-			fix_line= True	
-		elif isinstance(setting, tuple):
+		elif isinstance(setting, tuple) and len(setting)==2:
 			if len(setting)==2 and setting[0] in colors:
 			#colors
 				if setting[0]!=setting[1]:
 					ccodes=init+'3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+'m'
 				else:
 					raise ValueError('aprint: background and foreground colors cannot be the same')
+			
+			
 			elif len(setting)==2 and isinstance(setting[0], int):
 			#position
 				pcodes=init+str(setting[0])+';'+str(setting[1])+'f'
-				
+			
+			
+			elif setting[0]=='fix_line':
+			#fixing the cursor line on current line
+				fix_line= True
+				status_msg=str(setting[1])
+		
+		elif setting== 'fix_line':
+			fix_line= True
 
 	#Format mode codes
 	mcodes=mcodes[:-1]+'m'
@@ -62,8 +72,9 @@ def aprint(string, *args):
 	#Generating main style string
 	to_print=mcodes+ccodes+pcodes+str(string)+'\033[0m'
 
+	#Extra escape sequences to return to the same line+'status' message
 	if fix_line== True:
-		to_print='\033[s'+to_print+'\033[u'+'\033[A'+'\033[2K'+'\033[A'
+		to_print='\033[s'+to_print+'\033[u'+'\033[2K'+status_msg+'\033[A'+'\033[2K'+'\033[A'
 
 
 	#2nd step: printing everything
