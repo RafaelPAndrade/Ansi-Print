@@ -19,35 +19,55 @@ def aprint(string, *args):
 	
 	"""
 
-	#1st step: create necessary ansi codes
-	init='\033['
+	init='\033['	
+	#mcodes: ansi sequences related to settings like bold, underline, italic...
 	mcodes=init+'0;'
+	
+	#ccodes: sequences for coloring
 	ccodes=''
+	
+	#pcodes:sequences for choosing line and collumn
 	pcodes=''
 	
-	colors={'black':'0', 'red':'1', 'green':'2', 'yellow':'3', 'blue':'4', 'magenta':'5', 'cyan':'6', 'white':'7'}
+	#Option: if we want to keep the same line
+	fix_line=False
+	to_print=''
+
+
 	modes={'reset':'0', 'bold':'1', 'dim':'2', 'italic':'3', 'underline':'4'}
+	colors={'black':'0', 'red':'1', 'green':'2', 'yellow':'3', 'blue':'4', 'magenta':'5', 'cyan':'6', 'white':'7'}
 
 	for setting in args:
 		if setting in modes:
 		#modes
 			mcodes+= modes[setting]+';'
-		elif isinstance(setting, tuple) and len(setting)==2:
-			if setting[0] in colors:
+		elif setting=='fix_line':
+		#fixing the cursor line on current line
+			fix_line= True	
+		elif isinstance(setting, tuple):
+			if len(setting)==2 and setting[0] in colors:
 			#colors
 				if setting[0]!=setting[1]:
 					ccodes=init+'3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+'m'
 				else:
 					raise ValueError('aprint: background and foreground colors cannot be the same')
-			elif isinstance(setting[0], int):
+			elif len(setting)==2 and isinstance(setting[0], int):
 			#position
 				pcodes=init+str(setting[0])+';'+str(setting[1])+'f'
-				#codes=codes
-	
+				
+
+	#Format mode codes
 	mcodes=mcodes[:-1]+'m'
 
-	#2nd step: printing the ansi codes+string+reset
-	print(mcodes+ccodes+pcodes+str(string)+'\033[0m')
+	#Generating main style string
+	to_print=mcodes+ccodes+pcodes+str(string)+'\033[0m'
+
+	if fix_line== True:
+		to_print='\033[s'+to_print+'\033[u'+'\033[A'+'\033[2K'+'\033[A'
+
+
+	#2nd step: printing everything
+	print(to_print)
 	return
 
 
