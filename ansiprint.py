@@ -7,7 +7,7 @@
 def aprint(string, *args):
 	"""
 	Outputs given string according to the arguments given
-	
+
 	Input:
 	-string: string to print
 	-*args: multiple possible arguments, including:
@@ -16,19 +16,19 @@ def aprint(string, *args):
 		-[tuple] a position-(lines, collumns)
 	Output:
 	-print() with arguments given
-	
+
 	"""
 
-	init='\033['	
+	init='\033['
 	#mcodes: ansi sequences related to settings like bold, underline, italic...
 	mcodes=init+'0;'
-	
+
 	#ccodes: sequences for coloring
 	ccodes=''
-	
+
 	#pcodes:sequences for choosing line and collumn
 	pcodes=''
-	
+
 	#Option: if we want to keep the same line; and a status message, if we want anything under the cursor line
 	fix_line=False
 	status_msg=''
@@ -51,18 +51,18 @@ def aprint(string, *args):
 					ccodes=init+'3'+colors[setting[0]]+';'+'4'+colors[setting[1]]+'m'
 				else:
 					raise ValueError('aprint: background and foreground colors cannot be the same')
-			
-			
+
+
 			elif len(setting)==2 and isinstance(setting[0], int):
 			#position
 				pcodes=init+str(setting[0])+';'+str(setting[1])+'f'
-			
-			
+
+
 			elif setting[0]=='fix_line':
 			#fixing the cursor line on current line
 				fix_line= True
 				status_msg=str(setting[1])
-		
+
 		elif setting== 'fix_line':
 			fix_line= True
 
@@ -82,5 +82,7 @@ def aprint(string, *args):
 	return
 
 
-#A way to print a thing and comeback to previous line (except last line)
-#>>> print(save_cursos+<anything generated>+rest_cursor+<text under the prompt>+'\033[1A'+'\033[K'+'\033[1A')
+def aclear():
+	#Clears the screen of all output, returns to the 2nd line counting from the top
+	print('\033[2J\033[H')
+	return

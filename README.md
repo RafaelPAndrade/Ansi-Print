@@ -3,10 +3,12 @@
 
 ### Why not using colorama or other already tested solution?
 Basically, to train my Python. Also to aid in a future project, where I want as minimum dependencies as possible.
+However, I recommend Colorama: [link to pypi page](https://pypi.python.org/pypi/colorama) [link to GitHub page](https://github.com/tartley/colorama) if cross-compatibility is needed
+(And/Or anything more robust than a random python script ;) )
 
 ### What can I do with this?
 
-Print strings in a terminal. But with more options, like:
+Print strings in a terminal( + clearing the screen). But with more options, like:
 
 #### -Colors (foreground and background)
   * Available: black, white, blue, green, red, cyan, yellow, magenta
@@ -14,7 +16,7 @@ Print strings in a terminal. But with more options, like:
 #### -Styling
   * Bold, italic, underline...
 
-#### -Give a Position
+#### -Position
   * Position given in (line, collumn)
 
 #### - ... and return to the line it was before
@@ -24,16 +26,22 @@ Print strings in a terminal. But with more options, like:
 Note: Some functions may not work in some terminals.
 
 ### Known Issues:
--Returning to the same line does not work in known X-terminal emulators/Shells. Styling probably won't work either on those terminals. Colors will.
+-Returning to the same line does not work in some X-terminal emulators/Shells. Styling probably also won't work on those terminals. Colors are widely supported.
 
 -Trying to return to previous line while being at the last terminal line will put the cursor on the penultimate line; you can mask this issue by using it for status messages. 
 
 ## How can I use it?
 
-1.Load it in your python interpreter/ script
+1.Import it in your python interpreter/ script
 
 2.Run the magic function:
 
+To clear the screen:
+```python
+aclear()
+```
+
+To print:
 ```python
 aprint('Foobar' {, ...}*)
 ```
@@ -74,8 +82,3 @@ aprint('Foo', (40,100), 'underline', ('magenta','white'), ('fix_line','Bar') ,'b
   * dim
   * italic
   * underline
-
-
-
-
-
