@@ -3,7 +3,8 @@
 
 ### Why not using colorama or other already tested solution?
 Basically, to train my Python. Also to aid in a future project, where I want as minimum dependencies as possible.
-However, I recommend Colorama: [link to pypi page](https://pypi.python.org/pypi/colorama) [link to GitHub page](https://github.com/tartley/colorama) if cross-compatibility is needed
+
+However, I recommend Colorama: [(link to pypi page)](https://pypi.python.org/pypi/colorama)   [(link to GitHub page)](https://github.com/tartley/colorama) if cross-compatibility is needed
 (And/Or anything more robust than a random python script ;) )
 
 ### What can I do with this?
@@ -28,7 +29,7 @@ Note: Some functions may not work in some terminals.
 ### Known Issues:
 -Returning to the same line does not work in some X-terminal emulators/Shells. Styling probably also won't work on those terminals. Colors are widely supported.
 
--Trying to return to previous line while being at the last terminal line will put the cursor on the penultimate line; you can mask this issue by using it for status messages. 
+-It is impossible to go to the very first and last line (due to Ansi); for now, it uses the last line for an optional "Status message".
 
 ## How can I use it?
 
